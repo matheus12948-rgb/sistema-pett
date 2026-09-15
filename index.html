@@ -1,0 +1,737 @@
+<!DOCTYPE html>
+<html lang="pt-BR">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>PetManager — Sistema de Gestão para Pet Shops</title>
+  
+  <!-- Google Fonts: Plus Jakarta Sans & Inter -->
+  <link rel="preconnect" href="https://fonts.googleapis.com">
+  <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+  <link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700;800&family=Plus+Jakarta+Sans:wght@500;600;700;800&display=swap" rel="stylesheet">
+  
+  <!-- Lucide Icons CDN -->
+  <script src="https://unpkg.com/lucide@latest"></script>
+
+  <!-- CSS Stylesheets -->
+  <link rel="stylesheet" href="css/variables.css">
+  <link rel="stylesheet" href="css/base.css">
+  <link rel="stylesheet" href="css/layout.css">
+  <link rel="stylesheet" href="css/dashboard.css">
+  <link rel="stylesheet" href="css/clients-pets.css">
+  <link rel="stylesheet" href="css/agenda.css">
+  <link rel="stylesheet" href="css/grooming-pdv.css">
+  <link rel="stylesheet" href="css/modules.css">
+</head>
+<body>
+
+  <div class="app-wrapper">
+    <!-- ======================================================================
+         Sidebar
+         ====================================================================== -->
+    <aside class="sidebar">
+      <!-- Logo Header -->
+      <div class="sidebar-header">
+        <div class="sidebar-logo-icon">
+          <i data-lucide="paw-print" style="width: 22px; height: 22px;"></i>
+        </div>
+        <div class="sidebar-brand">
+          <span class="sidebar-brand-title">PetManager</span>
+          <span class="sidebar-brand-subtitle">Gestão para Pet Shops</span>
+        </div>
+      </div>
+
+      <!-- Navigation Links -->
+      <nav class="sidebar-nav">
+        <a class="sidebar-link active" data-view="dashboard" onclick="App.navigate('dashboard')">
+          <i data-lucide="layout-dashboard"></i>
+          <span>Dashboard</span>
+        </a>
+        <a class="sidebar-link" data-view="clientes" onclick="App.navigate('clientes')">
+          <i data-lucide="users"></i>
+          <span>Clientes</span>
+        </a>
+        <a class="sidebar-link" data-view="pets" onclick="App.navigate('pets')">
+          <i data-lucide="paw-print"></i>
+          <span>Pets</span>
+        </a>
+        <a class="sidebar-link" data-view="agenda" onclick="App.navigate('agenda')">
+          <i data-lucide="calendar"></i>
+          <span>Agenda</span>
+        </a>
+        <a class="sidebar-link" data-view="banho-tosa" onclick="App.navigate('banho-tosa')">
+          <i data-lucide="scissors"></i>
+          <span>Banho e Tosa</span>
+        </a>
+        <a class="sidebar-link" data-view="produtos" onclick="App.navigate('produtos')">
+          <i data-lucide="package"></i>
+          <span>Produtos</span>
+        </a>
+        <a class="sidebar-link" data-view="estoque" onclick="App.navigate('estoque')">
+          <i data-lucide="boxes"></i>
+          <span>Estoque</span>
+        </a>
+        <a class="sidebar-link" data-view="pdv" onclick="App.navigate('pdv')">
+          <i data-lucide="shopping-cart"></i>
+          <span>PDV</span>
+        </a>
+        <a class="sidebar-link" data-view="financeiro" onclick="App.navigate('financeiro')">
+          <i data-lucide="dollar-sign"></i>
+          <span>Financeiro</span>
+        </a>
+        <a class="sidebar-link" data-view="profissionais" onclick="App.navigate('profissionais')">
+          <i data-lucide="user-check"></i>
+          <span>Profissionais</span>
+        </a>
+        <a class="sidebar-link" data-view="comissoes" onclick="App.navigate('comissoes')">
+          <i data-lucide="percent"></i>
+          <span>Comissões</span>
+        </a>
+        <a class="sidebar-link" data-view="fornecedores" onclick="App.navigate('fornecedores')">
+          <i data-lucide="truck"></i>
+          <span>Fornecedores</span>
+        </a>
+        <a class="sidebar-link" data-view="relatorios" onclick="App.navigate('relatorios')">
+          <i data-lucide="bar-chart-2"></i>
+          <span>Relatórios</span>
+        </a>
+        <a class="sidebar-link" data-view="configuracoes" onclick="App.navigate('configuracoes')" style="margin-top: 0.5rem; border-top: 1px solid var(--sidebar-border); padding-top: 0.75rem;">
+          <i data-lucide="settings"></i>
+          <span>Configurações</span>
+        </a>
+      </nav>
+
+      <!-- Bottom Support Box -->
+      <div class="sidebar-footer">
+        <div class="support-card" onclick="App.showToast('Central de ajuda e suporte aberta')">
+          <div class="support-card-info">
+            <span class="support-card-title">Precisa de ajuda?</span>
+            <span class="support-card-subtitle">Acesse nossa central de suporte</span>
+          </div>
+          <i data-lucide="arrow-right" style="width: 16px; height: 16px; color: var(--sidebar-text);"></i>
+        </div>
+      </div>
+    </aside>
+
+    <!-- Sidebar Mobile Backdrop Overlay -->
+    <div class="sidebar-overlay" id="sidebar-overlay" onclick="App.closeSidebar()"></div>
+
+    <!-- ======================================================================
+         Main Workspace Wrapper
+         ====================================================================== -->
+    <div class="main-wrapper">
+      <!-- Topbar (Single-Company: sem seletores de loja/filial) -->
+      <header class="topbar">
+        <div class="topbar-left">
+          <button class="mobile-menu-btn" id="mobile-menu-btn" onclick="App.toggleSidebar()" aria-label="Alternar menu de navegação">
+            <i data-lucide="menu" aria-hidden="true"></i>
+          </button>
+          <div class="topbar-search">
+            <i data-lucide="search" aria-hidden="true"></i>
+            <input type="text" placeholder="Buscar no sistema..." aria-label="Buscar no sistema">
+          </div>
+        </div>
+
+        <div class="topbar-right">
+          <!-- Notification Bell -->
+          <button class="notif-btn" onclick="App.showToast('Você tem 3 notificações de vacinas e estoque!')" aria-label="Notificações (3 pendentes)">
+            <i data-lucide="bell" style="width: 18px; height: 18px;" aria-hidden="true"></i>
+            <span class="notif-badge">3</span>
+          </button>
+
+          <!-- User Profile -->
+          <div class="user-profile" onclick="App.showToast('Perfil de Matheus Lima (Administrador)')" tabindex="0" role="button" aria-label="Perfil do usuário Matheus Lima">
+            <div class="user-avatar" aria-hidden="true">M</div>
+            <div class="user-info">
+              <span class="user-name">Matheus Lima</span>
+              <span class="user-role">Administrador</span>
+            </div>
+          </div>
+        </div>
+      </header>
+
+      <!-- Dynamic Content View Area -->
+      <main class="content-area" id="main-content-view">
+        <!-- Rendered by JavaScript Views -->
+      </main>
+    </div>
+  </div>
+
+  <!-- ======================================================================
+       Modals com Acessibilidade (Single-Company)
+       ====================================================================== -->
+
+  <!-- Modal: Novo Cliente -->
+  <div class="modal-overlay" id="modal-new-client" role="dialog" aria-modal="true" aria-labelledby="modal-title-client" onclick="if(event.target === this) App.closeModal('modal-new-client')">
+    <div class="modal-dialog">
+      <div class="modal-header">
+        <h3 id="modal-title-client" style="font-size: 1.15rem;">Novo Cliente (Tutor)</h3>
+        <button type="button" class="btn btn-secondary btn-icon-sm" aria-label="Fechar modal" onclick="App.closeModal('modal-new-client')">✕</button>
+      </div>
+      <form onsubmit="App.handleNewClient(event)">
+        <div class="modal-body">
+          <div class="input-group">
+            <label class="input-label" for="clientName">Nome Completo *</label>
+            <input type="text" id="clientName" name="clientName" class="input-field" placeholder="Ex: Roberto Andrade" required>
+          </div>
+          <div style="display: grid; grid-template-columns: 1fr 1fr; gap: 1rem;">
+            <div class="input-group">
+              <label class="input-label" for="clientPhone">WhatsApp / Telefone *</label>
+              <input type="text" id="clientPhone" name="clientPhone" class="input-field" placeholder="(61) 98888-7777" required>
+            </div>
+            <div class="input-group">
+              <label class="input-label" for="clientEmail">E-mail</label>
+              <input type="email" id="clientEmail" name="clientEmail" class="input-field" placeholder="cliente@email.com">
+            </div>
+          </div>
+          <div class="input-group">
+            <label class="input-label" for="clientAddress">Endereço Completo</label>
+            <input type="text" id="clientAddress" name="clientAddress" class="input-field" placeholder="Rua, número, bairro e cidade">
+          </div>
+          <div class="input-group">
+            <label class="input-label" for="clientNotes">Observações</label>
+            <textarea id="clientNotes" name="clientNotes" class="textarea-field" rows="2" placeholder="Preferências de horário, observações financeiras..."></textarea>
+          </div>
+        </div>
+        <div class="modal-footer">
+          <button type="button" class="btn btn-secondary" onclick="App.closeModal('modal-new-client')">Cancelar</button>
+          <button type="submit" class="btn btn-primary">Salvar Cliente</button>
+        </div>
+      </form>
+    </div>
+  </div>
+
+  <!-- Modal: Novo Pet -->
+  <div class="modal-overlay" id="modal-new-pet" role="dialog" aria-modal="true" aria-labelledby="modal-title-pet" onclick="if(event.target === this) App.closeModal('modal-new-pet')">
+    <div class="modal-dialog">
+      <div class="modal-header">
+        <h3 id="modal-title-pet" style="font-size: 1.15rem;">Novo Pet</h3>
+        <button type="button" class="btn btn-secondary btn-icon-sm" aria-label="Fechar modal" onclick="App.closeModal('modal-new-pet')">✕</button>
+      </div>
+      <form onsubmit="App.handleNewPet(event)">
+        <div class="modal-body">
+          <div class="input-group">
+            <label class="input-label" for="petTutorSelect">Tutor Responsável *</label>
+            <select name="petTutor" id="petTutorSelect" class="select-field" required>
+              <option value="cli_1">Carlos Silva</option>
+              <option value="cli_2">Ana Paula Santos</option>
+              <option value="cli_3">João Ferreira</option>
+              <option value="cli_4">Fernanda Costa</option>
+              <option value="cli_5">Marcelo Almeida</option>
+              <option value="cli_6">Juliana Rocha</option>
+            </select>
+          </div>
+          <div style="display: grid; grid-template-columns: 1.5fr 1fr; gap: 1rem;">
+            <div class="input-group">
+              <label class="input-label" for="petName">Nome do Pet *</label>
+              <input type="text" id="petName" name="petName" class="input-field" placeholder="Ex: Max" required>
+            </div>
+            <div class="input-group">
+              <label class="input-label" for="petSpecies">Espécie *</label>
+              <select name="petSpecies" id="petSpecies" class="select-field">
+                <option value="Cão">Cão</option>
+                <option value="Gato">Gato</option>
+                <option value="Outros">Outros</option>
+              </select>
+            </div>
+          </div>
+          <div style="display: grid; grid-template-columns: 1fr 1fr; gap: 1rem;">
+            <div class="input-group">
+              <label class="input-label" for="petBreed">Raça *</label>
+              <input type="text" id="petBreed" name="petBreed" class="input-field" placeholder="Ex: Golden Retriever, SRD" required>
+            </div>
+            <div class="input-group">
+              <label class="input-label" for="petGender">Sexo</label>
+              <select name="petGender" id="petGender" class="select-field">
+                <option value="Macho">Macho</option>
+                <option value="Fêmea">Fêmea</option>
+              </select>
+            </div>
+          </div>
+          <div style="display: grid; grid-template-columns: 1fr 1fr 1fr; gap: 0.75rem;">
+            <div class="input-group">
+              <label class="input-label" for="petAge">Idade</label>
+              <input type="text" id="petAge" name="petAge" class="input-field" placeholder="Ex: 2 anos">
+            </div>
+            <div class="input-group">
+              <label class="input-label" for="petWeight">Peso</label>
+              <input type="text" id="petWeight" name="petWeight" class="input-field" placeholder="Ex: 14 kg">
+            </div>
+            <div class="input-group">
+              <label class="input-label" for="petSize">Porte</label>
+              <select name="petSize" id="petSize" class="select-field">
+                <option value="Pequeno">Pequeno</option>
+                <option value="Médio">Médio</option>
+                <option value="Grande">Grande</option>
+              </select>
+            </div>
+          </div>
+          <div style="display: grid; grid-template-columns: 1fr 1fr; gap: 1rem;">
+            <div class="input-group">
+              <label class="input-label" for="petMicrochip">Microchip</label>
+              <input type="text" id="petMicrochip" name="petMicrochip" class="input-field" placeholder="Ex: 982000345129841">
+            </div>
+            <div class="input-group">
+              <label class="input-label" for="petTemperament">Temperamento</label>
+              <input type="text" id="petTemperament" name="petTemperament" class="input-field" placeholder="Ex: Dócil, bravo com secador...">
+            </div>
+          </div>
+          <div class="input-group">
+            <label class="input-label" for="petNotes">Observações / Alergias</label>
+            <textarea id="petNotes" name="petNotes" class="textarea-field" rows="2" placeholder="Observações de atendimento, alergias ou restrições..."></textarea>
+          </div>
+        </div>
+        <div class="modal-footer">
+          <button type="button" class="btn btn-secondary" onclick="App.closeModal('modal-new-pet')">Cancelar</button>
+          <button type="submit" class="btn btn-primary">Cadastrar Pet</button>
+        </div>
+      </form>
+    </div>
+  </div>
+
+  <!-- Modal: Novo Agendamento -->
+  <div class="modal-overlay" id="modal-new-appointment" role="dialog" aria-modal="true" aria-labelledby="modal-title-app" onclick="if(event.target === this) App.closeModal('modal-new-appointment')">
+    <div class="modal-dialog">
+      <div class="modal-header">
+        <h3 id="modal-title-app" style="font-size: 1.15rem;">Novo Agendamento</h3>
+        <button type="button" class="btn btn-secondary btn-icon-sm" aria-label="Fechar modal" onclick="App.closeModal('modal-new-appointment')">✕</button>
+      </div>
+      <form onsubmit="App.handleNewAppointment(event)">
+        <div class="modal-body">
+          <div class="input-group">
+            <label class="input-label" for="appPetSelect">Pet *</label>
+            <select name="appPet" id="appPetSelect" class="select-field" required>
+              <option value="Thor (Carlos Silva)">Thor — Golden Retriever (Carlos Silva)</option>
+              <option value="Luna (Carlos Silva)">Luna — Gata SRD (Carlos Silva)</option>
+              <option value="Mel (Ana Paula)">Mel — Shih Tzu (Ana Paula)</option>
+              <option value="Luke (João Ferreira)">Luke — Bulldog Francês (João Ferreira)</option>
+              <option value="Nina (Fernanda Costa)">Nina — Poodle (Fernanda Costa)</option>
+              <option value="Amora (Juliana Rocha)">Amora — Persa (Juliana Rocha)</option>
+              <option value="Bob (Ricardo Lima)">Bob — Vira-lata (Ricardo Lima)</option>
+            </select>
+          </div>
+          <div style="display: grid; grid-template-columns: 1fr 1fr; gap: 1rem;">
+            <div class="input-group">
+              <label class="input-label" for="appService">Serviço *</label>
+              <select name="appService" id="appService" class="select-field" required>
+                <option value="Banho">Banho Simples (R$ 80,00)</option>
+                <option value="Tosa Completa">Tosa Completa (R$ 120,00)</option>
+                <option value="Banho + Tosa">Banho + Tosa (R$ 150,00)</option>
+                <option value="Hidratação">Hidratação Especial (R$ 60,00)</option>
+                <option value="Consulta Veterinária">Consulta Veterinária (R$ 140,00)</option>
+              </select>
+            </div>
+            <div class="input-group">
+              <label class="input-label" for="appProf">Profissional Responsável *</label>
+              <select name="appProf" id="appProf" class="select-field" required>
+                <option value="João Silva">João Silva (Banho e Tosa)</option>
+                <option value="Carla Mendes">Carla Mendes (Banho e Tosa)</option>
+                <option value="Marcos Vinicius">Marcos Vinicius (Banho e Tosa)</option>
+                <option value="Ana Beatriz">Ana Beatriz (Especialista em Felinos)</option>
+                <option value="Sala 1 - Vet">Sala 1 - Vet (Atendimento Clínico & Vacinação)</option>
+              </select>
+            </div>
+          </div>
+          <div style="display: grid; grid-template-columns: 1fr 1fr; gap: 1rem;">
+            <div class="input-group">
+              <label class="input-label" for="appDate">Data</label>
+              <input type="date" id="appDate" name="appDate" class="input-field" value="2025-09-15">
+            </div>
+            <div class="input-group">
+              <label class="input-label" for="appTime">Horário *</label>
+              <select id="appTime" name="appTime" class="select-field" required>
+                <option value="08:00">08:00</option>
+                <option value="09:00">09:00</option>
+                <option value="10:00">10:00</option>
+                <option value="11:00">11:00</option>
+                <option value="12:00">12:00</option>
+                <option value="14:00" selected>14:00</option>
+                <option value="15:00">15:00</option>
+                <option value="16:00">16:00</option>
+                <option value="17:00">17:00</option>
+                <option value="18:00">18:00</option>
+              </select>
+            </div>
+          </div>
+        </div>
+        <div class="modal-footer">
+          <button type="button" class="btn btn-secondary" onclick="App.closeModal('modal-new-appointment')">Cancelar</button>
+          <button type="submit" class="btn btn-primary">Confirmar Agendamento</button>
+        </div>
+      </form>
+    </div>
+  </div>
+
+  <!-- Modal 4: Nova Receita / Despesa -->
+  <div class="modal-overlay" id="modal-financial-entry" role="dialog" aria-modal="true" aria-labelledby="modal-fin-title">
+    <div class="modal-dialog">
+      <div class="modal-header">
+        <h2 id="modal-fin-title">Nova receita/despesa</h2>
+        <button class="modal-close" onclick="App.closeModal('modal-financial-entry')" aria-label="Fechar modal">
+          <i data-lucide="x" aria-hidden="true"></i>
+        </button>
+      </div>
+
+      <form onsubmit="App.handleNewFinancialEntry(event)">
+        <div class="modal-body">
+          <!-- Type Toggle (Receita x Despesa) -->
+          <div class="type-toggle-container">
+            <button type="button" class="type-toggle-btn active-receita" id="btnToggleReceita" onclick="App.setFinancialEntryType('Receita')">
+              <i data-lucide="arrow-down-left" style="width: 16px; height: 16px;"></i> Receita
+            </button>
+            <button type="button" class="type-toggle-btn" id="btnToggleDespesa" onclick="App.setFinancialEntryType('Despesa')">
+              <i data-lucide="arrow-up-right" style="width: 16px; height: 16px;"></i> Despesa
+            </button>
+          </div>
+          <input type="hidden" id="finType" name="finType" value="Receita">
+
+          <div class="input-group">
+            <label class="input-label" for="finDescription">Descrição *</label>
+            <input type="text" id="finDescription" name="finDescription" class="input-field" placeholder="Ex: Banho + Tosa Thor ou Reposição Shampoos" required>
+          </div>
+
+          <div style="display: grid; grid-template-columns: 1fr 1fr; gap: 1rem;">
+            <div class="input-group">
+              <label class="input-label" for="finCategory">Categoria *</label>
+              <select id="finCategory" name="finCategory" class="select-field" required>
+                <option value="Serviços">Serviços de Estética</option>
+                <option value="Venda de Produtos">Venda de Produtos</option>
+                <option value="Veterinária">Veterinária / Vacinas</option>
+                <option value="Fornecedores">Fornecedores / Insumos</option>
+                <option value="Comissões">Comissões de Equipe</option>
+                <option value="Infraestrutura">Infraestrutura / Contas</option>
+                <option value="Manutenção">Manutenção</option>
+                <option value="Outros">Outros</option>
+              </select>
+            </div>
+
+            <div class="input-group">
+              <label class="input-label" for="finAmount">Valor (R$) *</label>
+              <input type="number" id="finAmount" name="finAmount" class="input-field" step="0.01" min="0.01" placeholder="0,00" required>
+            </div>
+          </div>
+
+          <div style="display: grid; grid-template-columns: 1fr 1fr; gap: 1rem;">
+            <div class="input-group">
+              <label class="input-label" for="finDate">Data *</label>
+              <input type="date" id="finDate" name="finDate" class="input-field" required>
+            </div>
+
+            <div class="input-group">
+              <label class="input-label" for="finPaymentMethod">Forma de Pagamento *</label>
+              <select id="finPaymentMethod" name="finPaymentMethod" class="select-field" required>
+                <option value="PIX">PIX</option>
+                <option value="Cartão de Crédito">Cartão de Crédito</option>
+                <option value="Cartão de Débito">Cartão de Débito</option>
+                <option value="Dinheiro">Dinheiro em Espécie</option>
+                <option value="Boleto">Boleto Bancário</option>
+                <option value="Transferência">Transferência Bancária</option>
+              </select>
+            </div>
+          </div>
+
+          <div style="display: grid; grid-template-columns: 1fr 1fr; gap: 1rem;">
+            <div class="input-group">
+              <label class="input-label" for="finClient" id="finClientLabel">Cliente / Favorecido</label>
+              <input type="text" id="finClient" name="finClient" class="input-field" placeholder="Ex: Carlos Silva ou Neoenergia">
+            </div>
+
+            <div class="input-group">
+              <label class="input-label" for="finPet">Pet Vinculado (Opcional)</label>
+              <select id="finPet" name="finPet" class="select-field">
+                <option value="-">Nenhum pet</option>
+              </select>
+            </div>
+          </div>
+
+          <div class="input-group">
+            <label class="input-label" for="finStatus">Status do Lançamento</label>
+            <select id="finStatus" name="finStatus" class="select-field">
+              <option value="Pago" selected>Pago / Liquidado</option>
+              <option value="Pendente">Pendente / A Liquidar</option>
+            </select>
+          </div>
+
+          <div class="input-group">
+            <label class="input-label" for="finNotes">Observações</label>
+            <textarea id="finNotes" name="finNotes" class="textarea-field" rows="2" placeholder="Informações adicionais, NF-e ou detalhes do pagamento..."></textarea>
+          </div>
+
+          <div class="input-group" style="margin-bottom: 0;">
+            <label class="input-label" for="finAttachment">Comprovante / Anexo (Opcional)</label>
+            <input type="file" id="finAttachment" name="finAttachment" class="input-field" style="padding: 0.4rem;" accept=".pdf,.png,.jpg,.jpeg">
+          </div>
+        </div>
+
+        <div class="modal-footer">
+          <button type="button" class="btn btn-secondary" onclick="App.closeModal('modal-financial-entry')">Cancelar</button>
+          <button type="submit" class="btn btn-primary" id="finSubmitBtn">Salvar receita</button>
+        </div>
+      </form>
+    </div>
+  </div>
+
+  <!-- Modal 5: Novo Produto -->
+  <div class="modal-overlay" id="modal-new-product" role="dialog" aria-modal="true" aria-labelledby="modal-prod-title">
+    <div class="modal-dialog">
+      <div class="modal-header">
+        <h2 id="modal-prod-title">Cadastrar Novo Produto</h2>
+        <button class="modal-close" onclick="App.closeModal('modal-new-product')" aria-label="Fechar modal">
+          <i data-lucide="x" aria-hidden="true"></i>
+        </button>
+      </div>
+
+      <form onsubmit="App.handleNewProduct(event)">
+        <div class="modal-body">
+          <div class="input-group">
+            <label class="input-label" for="prodName">Nome do Produto *</label>
+            <input type="text" id="prodName" name="prodName" class="input-field" placeholder="Ex: Shampoo Hipoalergênico 5L" required>
+          </div>
+
+          <div style="display: grid; grid-template-columns: 1fr 1fr; gap: 1rem;">
+            <div class="input-group">
+              <label class="input-label" for="prodBrand">Marca / Fabricante</label>
+              <input type="text" id="prodBrand" name="prodBrand" class="input-field" placeholder="Ex: PetClean">
+            </div>
+
+            <div class="input-group">
+              <label class="input-label" for="prodCategory">Categoria *</label>
+              <select id="prodCategory" name="prodCategory" class="select-field" required>
+                <option value="Higiene">Higiene</option>
+                <option value="Alimentação">Alimentação</option>
+                <option value="Petiscos">Petiscos</option>
+                <option value="Medicamentos">Medicamentos</option>
+                <option value="Brinquedos">Brinquedos</option>
+                <option value="Acessórios">Acessórios</option>
+              </select>
+            </div>
+          </div>
+
+          <div style="display: grid; grid-template-columns: 1fr 1fr; gap: 1rem;">
+            <div class="input-group">
+              <label class="input-label" for="prodCost">Preço de Custo (R$)</label>
+              <input type="number" id="prodCost" name="prodCost" class="input-field" step="0.01" min="0" placeholder="0,00">
+            </div>
+
+            <div class="input-group">
+              <label class="input-label" for="prodPrice">Preço de Venda (R$) *</label>
+              <input type="number" id="prodPrice" name="prodPrice" class="input-field" step="0.01" min="0.01" placeholder="0,00" required>
+            </div>
+          </div>
+
+          <div style="display: grid; grid-template-columns: 1fr 1fr; gap: 1rem;">
+            <div class="input-group">
+              <label class="input-label" for="prodStock">Estoque Inicial *</label>
+              <input type="number" id="prodStock" name="prodStock" class="input-field" min="0" value="10" required>
+            </div>
+
+            <div class="input-group">
+              <label class="input-label" for="prodMinStock">Estoque Mínimo (Alerta) *</label>
+              <input type="number" id="prodMinStock" name="prodMinStock" class="input-field" min="0" value="5" required>
+            </div>
+          </div>
+
+          <div class="input-group" style="margin-bottom: 0;">
+            <label class="input-label" for="prodImage">URL da Foto / Imagem</label>
+            <input type="url" id="prodImage" name="prodImage" class="input-field" placeholder="https://..." value="https://images.unsplash.com/photo-1584308666744-24d5c474f2ae?w=150&auto=format&fit=crop&q=80">
+          </div>
+        </div>
+
+        <div class="modal-footer">
+          <button type="button" class="btn btn-secondary" onclick="App.closeModal('modal-new-product')">Cancelar</button>
+          <button type="submit" class="btn btn-primary">Salvar Produto</button>
+        </div>
+      </form>
+    </div>
+  </div>
+
+  <!-- Modal 6: Nova Movimentação de Estoque -->
+  <div class="modal-overlay" id="modal-inventory-movement" role="dialog" aria-modal="true" aria-labelledby="modal-mov-title">
+    <div class="modal-dialog">
+      <div class="modal-header">
+        <h2 id="modal-mov-title">Nova Movimentação de Estoque</h2>
+        <button class="modal-close" onclick="App.closeModal('modal-inventory-movement')" aria-label="Fechar modal">
+          <i data-lucide="x" aria-hidden="true"></i>
+        </button>
+      </div>
+
+      <form onsubmit="App.handleInventoryMovement(event)">
+        <div class="modal-body">
+          <div class="input-group">
+            <label class="input-label" for="movProduct">Produto *</label>
+            <select id="movProduct" name="movProduct" class="select-field" required>
+              <!-- Populated dynamically -->
+            </select>
+          </div>
+
+          <div style="display: grid; grid-template-columns: 1fr 1fr; gap: 1rem;">
+            <div class="input-group">
+              <label class="input-label" for="movType">Tipo de Movimentação *</label>
+              <select id="movType" name="movType" class="select-field" required>
+                <option value="Entrada">Entrada (+ Compra / Reposição)</option>
+                <option value="Saída">Saída (- Consumo Interno / Perda)</option>
+                <option value="Ajuste">Ajuste de Balanço</option>
+              </select>
+            </div>
+
+            <div class="input-group">
+              <label class="input-label" for="movQuantity">Quantidade *</label>
+              <input type="number" id="movQuantity" name="movQuantity" class="input-field" min="1" value="1" required>
+            </div>
+          </div>
+
+          <div class="input-group">
+            <label class="input-label" for="movReason">Motivo / Justificativa *</label>
+            <input type="text" id="movReason" name="movReason" class="input-field" placeholder="Ex: Reposição fornecedor NF 1042 ou Uso na banheira 2" required>
+          </div>
+
+          <div class="input-group" style="margin-bottom: 0;">
+            <label class="input-label" for="movResponsible">Responsável</label>
+            <input type="text" id="movResponsible" name="movResponsible" class="input-field" value="Matheus Lima">
+          </div>
+        </div>
+
+        <div class="modal-footer">
+          <button type="button" class="btn btn-secondary" onclick="App.closeModal('modal-inventory-movement')">Cancelar</button>
+          <button type="submit" class="btn btn-primary">Confirmar Movimentação</button>
+        </div>
+      </form>
+    </div>
+  </div>
+
+  <!-- Modal 7: Novo Profissional -->
+  <div class="modal-overlay" id="modal-new-professional" role="dialog" aria-modal="true" aria-labelledby="modal-prof-title">
+    <div class="modal-dialog">
+      <div class="modal-header">
+        <h2 id="modal-prof-title">Cadastrar Novo Profissional</h2>
+        <button class="modal-close" onclick="App.closeModal('modal-new-professional')" aria-label="Fechar modal">
+          <i data-lucide="x" aria-hidden="true"></i>
+        </button>
+      </div>
+
+      <form onsubmit="App.handleNewProfessional(event)">
+        <div class="modal-body">
+          <div class="input-group">
+            <label class="input-label" for="profName">Nome Completo *</label>
+            <input type="text" id="profName" name="profName" class="input-field" placeholder="Ex: Fernanda Ribeiro" required>
+          </div>
+
+          <div style="display: grid; grid-template-columns: 1fr 1fr; gap: 1rem;">
+            <div class="input-group">
+              <label class="input-label" for="profRole">Função / Cargo *</label>
+              <select id="profRole" name="profRole" class="select-field" required>
+                <option value="Banho e Tosa">Banho e Tosa</option>
+                <option value="Estética Especializada">Estética Especializada</option>
+                <option value="Banhista e Secador">Banhista e Secador</option>
+                <option value="Veterinária">Médica Veterinária</option>
+                <option value="Atendimento e PDV">Atendimento e PDV</option>
+              </select>
+            </div>
+
+            <div class="input-group">
+              <label class="input-label" for="profCommission">Comissão (%) *</label>
+              <input type="number" id="profCommission" name="profCommission" class="input-field" min="0" max="100" value="35" required>
+            </div>
+          </div>
+
+          <div class="input-group">
+            <label class="input-label" for="profPhone">Telefone / WhatsApp</label>
+            <input type="tel" id="profPhone" name="profPhone" class="input-field" placeholder="(61) 98888-7777">
+          </div>
+
+          <div class="input-group" style="margin-bottom: 0;">
+            <label class="input-label" for="profServices">Serviços Habilitados (separados por vírgula)</label>
+            <input type="text" id="profServices" name="profServices" class="input-field" value="Banho, Tosa Higiênica, Hidratação">
+          </div>
+        </div>
+
+        <div class="modal-footer">
+          <button type="button" class="btn btn-secondary" onclick="App.closeModal('modal-new-professional')">Cancelar</button>
+          <button type="submit" class="btn btn-primary">Salvar Profissional</button>
+        </div>
+      </form>
+    </div>
+  </div>
+
+  <!-- Modal 8: Novo Fornecedor -->
+  <div class="modal-overlay" id="modal-new-supplier" role="dialog" aria-modal="true" aria-labelledby="modal-sup-title">
+    <div class="modal-dialog">
+      <div class="modal-header">
+        <h2 id="modal-sup-title">Cadastrar Novo Fornecedor</h2>
+        <button class="modal-close" onclick="App.closeModal('modal-new-supplier')" aria-label="Fechar modal">
+          <i data-lucide="x" aria-hidden="true"></i>
+        </button>
+      </div>
+
+      <form onsubmit="App.handleNewSupplier(event)">
+        <div class="modal-body">
+          <div class="input-group">
+            <label class="input-label" for="supName">Razão Social *</label>
+            <input type="text" id="supName" name="supName" class="input-field" placeholder="Ex: AgroPet Distribuidora Ltda" required>
+          </div>
+
+          <div style="display: grid; grid-template-columns: 1fr 1fr; gap: 1rem;">
+            <div class="input-group">
+              <label class="input-label" for="supTradeName">Nome Fantasia</label>
+              <input type="text" id="supTradeName" name="supTradeName" class="input-field" placeholder="Ex: AgroPet">
+            </div>
+
+            <div class="input-group">
+              <label class="input-label" for="supCnpj">CNPJ *</label>
+              <input type="text" id="supCnpj" name="supCnpj" class="input-field" placeholder="00.000.000/0001-00" required>
+            </div>
+          </div>
+
+          <div style="display: grid; grid-template-columns: 1fr 1fr; gap: 1rem;">
+            <div class="input-group">
+              <label class="input-label" for="supPhone">Telefone Comercial</label>
+              <input type="tel" id="supPhone" name="supPhone" class="input-field" placeholder="(11) 3333-4444">
+            </div>
+
+            <div class="input-group">
+              <label class="input-label" for="supEmail">E-mail para Pedidos</label>
+              <input type="email" id="supEmail" name="supEmail" class="input-field" placeholder="pedidos@fornecedor.com.br">
+            </div>
+          </div>
+
+          <div class="input-group">
+            <label class="input-label" for="supContact">Contato Comercial</label>
+            <input type="text" id="supContact" name="supContact" class="input-field" placeholder="Ex: Rodrigo Vendas">
+          </div>
+
+          <div class="input-group" style="margin-bottom: 0;">
+            <label class="input-label" for="supCategories">Categorias de Fornecimento</label>
+            <input type="text" id="supCategories" name="supCategories" class="input-field" value="Higiene, Acessórios">
+          </div>
+        </div>
+
+        <div class="modal-footer">
+          <button type="button" class="btn btn-secondary" onclick="App.closeModal('modal-new-supplier')">Cancelar</button>
+          <button type="submit" class="btn btn-primary">Salvar Fornecedor</button>
+        </div>
+      </form>
+    </div>
+  </div>
+
+  <!-- Toast Notification Container -->
+  <div class="toast-container" id="toast-container"></div>
+
+  <!-- Application Logic Scripts -->
+  <script src="js/data.js"></script>
+  <script src="js/views/dashboard.js"></script>
+  <script src="js/views/clients.js"></script>
+  <script src="js/views/pets.js"></script>
+  <script src="js/views/agenda.js"></script>
+  <script src="js/views/grooming.js"></script>
+  <script src="js/views/pdv.js"></script>
+  <script src="js/views/financial.js"></script>
+  <script src="js/views/products.js"></script>
+  <script src="js/views/inventory.js"></script>
+  <script src="js/views/professionals.js"></script>
+  <script src="js/views/commissions.js"></script>
+  <script src="js/views/suppliers.js"></script>
+  <script src="js/views/reports.js"></script>
+  <script src="js/views/settings.js"></script>
+  <script src="js/app.js"></script>
+</body>
+</html>
